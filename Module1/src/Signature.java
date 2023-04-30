@@ -4,6 +4,8 @@ import java.security.KeyPair;
 
 public class Signature extends DigitalSignature {
 
+    private static CRF crf = new CRF(64);
+
     public static SignatureKeys keygen() {
         KeyPair keys = generate_keys();
         String sk = Conversion.byteToHex(keys.getPrivate().getEncoded());
@@ -31,11 +33,15 @@ public class Signature extends DigitalSignature {
 
     public static String Sign(String m, String sk) {
 
-        return "";
+        String hash = crf.Fn(m);
+        return BoundedMsgSign(hash, sk);
     }
 
     public static boolean Verify(String m, String vk, String sig) {
 
-        return false;
+
+        String hash = crf.Fn(m);
+        return BoundedMsgVerify(hash, vk, sig);
+
     }
 }
