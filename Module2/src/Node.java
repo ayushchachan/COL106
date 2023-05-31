@@ -20,4 +20,8 @@ public class Node{
 	public Node(Data data) {
 		this(data, null);
 	}
+
+	public Node() {
+
+	}
 }

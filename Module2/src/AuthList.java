@@ -1,10 +1,14 @@
 import Includes.*;
 
+import java.util.LinkedList;
+
 public class AuthList{
 	// PLEASE USE YOUR ENTRY NUMBER AS THE START STRING
 	public static final String start_string = "2016BB50005";
 	public Node firstNode;
 	public Node lastNode;
+
+	private CRF obj = new CRF(64);
 
 	/*
 		Note that the Exceptions have already been defined for you in the includes file,
@@ -45,6 +49,10 @@ public class AuthList{
 		return true;
 	}
 
+	public boolean isEmpty() {
+		return this.firstNode == null;
+	}
+
 
 	public String InsertNode(Data datainsert, String proof) throws AuthenticationFailedException {
 		/*
@@ -54,14 +62,15 @@ public class AuthList{
 
 		String dgst;
 		Node newest;
-		if (lastNode == null) {
-			dgst = start_string + "#" + datainsert.value;
+		if (lastNode != null) {
+			dgst = obj.Fn(lastNode.dgst + "#" + datainsert.value);
 			newest = new Node(datainsert, dgst);
 			newest.previous = lastNode;
 			lastNode.next = newest;
 			lastNode = newest;
 		} else {
-			dgst = lastNode.dgst + "#" + datainsert.value;
+
+			dgst = obj.Fn(start_string + "#" + datainsert.value);
 			newest = new Node(datainsert, dgst);
 			firstNode = lastNode = newest;
 		}
@@ -80,9 +89,21 @@ public class AuthList{
 
 		if (firstNode == null) {
 			lastNode = null;
-
+			return null;
 		}
-		return null;
+
+		firstNode.previous = null;
+		x.next = null;
+		x = firstNode;
+
+		String dgst = start_string;
+
+		while (x != null) {
+			x.dgst = obj.Fn(dgst + "#" + x.data.value);
+			dgst = x.dgst;
+			x = x.next;
+		}
+		return lastNode.dgst;
 	}
 
 
@@ -91,9 +112,19 @@ public class AuthList{
 			Implement Code here
 		*/
 		CheckList(this, proof);
-		if (firstNode == null) throw new EmptyListException("ERROR: List is Empty!");
+		if (firstNode == null) throw new EmptyListException();
 
-		return null;
+		Node x = lastNode;
+		lastNode = lastNode.previous;
+
+		if (lastNode == null) {
+			firstNode = null;
+			return null;
+		}
+		lastNode.next = null;
+		x.previous = null;
+
+		return lastNode.dgst;
 	}
 
 	/* 
@@ -104,7 +135,15 @@ public class AuthList{
 		/*
 			Implement Code here
 		*/
-		return null;
+		CheckList(current, proof);
+
+		Node x = current.firstNode;
+
+		while (x != null) {
+			if (x.data.equals(data)) return x;
+			x = x.next;
+		}
+		throw new DocumentNotFoundException();
 	}
 
 	public void AttackList(AuthList current, String new_data)throws EmptyListException{
@@ -113,4 +152,16 @@ public class AuthList{
 		*/
 	}
 
+	@Override
+	public String toString() {
+		LinkedList<String> L = new LinkedList<>();
+
+		Node x = firstNode;
+		while (x != null) {
+			L.add(x.data.value);
+			x = x.next;
+
+		}
+		return L.toString();
+	}
 }

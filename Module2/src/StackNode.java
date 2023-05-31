@@ -1,6 +1,6 @@
 import Includes.*;
 
-public class StackNode{
+public class StackNode extends Node{
 	public Data data;
 	
 	/*
@@ -12,4 +12,8 @@ public class StackNode{
 
 	public String dgst;
 
+	public StackNode(Data data, String dgst) {
+		this.data = data;
+		this.dgst = dgst;
+	}
 }
