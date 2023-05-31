@@ -33,15 +33,15 @@ public class Signature extends DigitalSignature {
 
     public static String Sign(String m, String sk) {
 
-        String hash = crf.Fn(m);
-        return BoundedMsgSign(hash, sk);
+        String dgst = crf.Fn(m);
+        return BoundedMsgSign(dgst, sk);
     }
 
     public static boolean Verify(String m, String vk, String sig) {
 
 
-        String hash = crf.Fn(m);
-        return BoundedMsgVerify(hash, vk, sig);
+        String dgst = crf.Fn(m);
+        return BoundedMsgVerify(dgst, vk, sig);
 
     }
 }
